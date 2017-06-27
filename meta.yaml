@@ -1,0 +1,41 @@
+#{% set data = load_setup_py_data() %}
+#{% set version = data.get('version') %}
+{% set version = "0.1.3" %}
+{% set buildnumber = 0 %}
+
+package:
+    name: smp
+    version: {{version}}
+
+source:
+    path: .
+
+requirements:
+    build:
+      - python
+    run:
+      - python
+
+build:
+    number: {{buildnumber}}
+    entry_points:
+      - python-smp = smp:_main
+    noarch_python: True
+    script: python setup.py install
+
+test:
+    requires:
+      - intel_tester
+    files:
+      - intel_tester_config.py
+    commands:
+      - python -c "from intel_tester import test_routine; test_routine.test_exec()" # [linux]
+      - python-smp -h    # [linux]
+    imports:
+      - smp
+      - SMP
+
+about:
+    license: BSD
+    license_file: LICENSE
+    summary: a Static Multi-Processing module handling nested parallelism issues like oversubscription while composing different parallel components
