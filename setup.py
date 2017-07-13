@@ -39,7 +39,7 @@ setup(  name        ="SMP",
         url         ="https://software.intel.com/intel-distribution-for-python",
         author      ="Intel Corporation",
         author_email="scripting@intel.com",
-        license     ="Intel EULA",
+        license     ="BSD",
         version     = ver,
         classifiers =[
             'Development Status :: 4 - Beta',
