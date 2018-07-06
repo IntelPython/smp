@@ -47,7 +47,7 @@ try:
 except:
     PsutilProcess = None
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 __all__ = ["Monkey"]
 __doc__ = """
 Static Multi-Processing module
@@ -552,9 +552,14 @@ def _main():
     import argparse
     parser = argparse.ArgumentParser(prog="python -m smp", description=__doc__,
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('-f', '--oversubscription-factor', default=oversubscription_factor, metavar='Number',
-                        help="Limits maximal number of threads as available CPU * Number", type=int)
-    parser.add_argument('-p', '--max-top-workers', default=max_top_workers, metavar='Number', type=int,
+    parser.add_argument('-f', '--oversubscription-factor', default=oversubscription_factor, metavar='N',
+                        help="Limits maximal number of threads as available CPU*N", type=int)
+    parser.add_argument('-t', '--kmp-blocktime', default=os.environ.get("KMP_BLOCKTIME", 0), metavar='N',
+                        help="Sets KMP_BLOCKTIME as a time of busy wait of worker threads", type=int)
+    parser.add_argument('-o', '--kmp-composability', action='store_true',
+                        help="Disables monkey, uses KMP_COMPOSABILITY=mode=counting instead"
+                             " to enable composability mode of libiomp")
+    parser.add_argument('-p', '--max-top-workers', default=max_top_workers, metavar='P', type=int,
                         help="Limits outermost parallelism by controlling number of thread or "
                              "processes workers created by Python pools")
     parser.add_argument('-m', action='store_true', dest='module',
@@ -564,11 +569,16 @@ def _main():
                         help="Command line arguments")
     args = parser.parse_args()
     sys.argv = [args.name] + args.args
-    if not os.environ.get("KMP_BLOCKTIME"):
-        os.environ["KMP_BLOCKTIME"] = "0"
     if '_' + args.name in globals():
         return globals()['_' + args.name](*args.args)
+    elif args.kmp_composability:
+        os.environ["KMP_COMPOSABILITY"] = "mode=counting"
+        os.environ["MKL_THREADING_LAYER"] = "INTEL"
+        import runpy
+        runf = runpy.run_module if args.module else runpy.run_path
+        runf(args.name, run_name='__main__')
     else:
+        os.environ["KMP_BLOCKTIME"] = str(args.kmp_blocktime)
         import runpy
         runf = runpy.run_module if args.module else runpy.run_path
         with Monkey(oversubscription_factor = args.oversubscription_factor,
