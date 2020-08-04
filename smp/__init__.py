@@ -424,7 +424,7 @@ if ThreadPoolExecutor:
                               process_count=1, process_id=0):
         from concurrent.futures.thread import _worker
         limit_num_threads(process_count, process_id)
-        _worker(executor_reference, work_queue)
+        _worker(executor_reference, work_queue, None, [])
 
     class LimitedThreadPoolExecutor(ThreadPoolExecutor):
         def __init__(self, max_workers=None):
