@@ -293,7 +293,7 @@ class AffinityPool35(Pool):
 
         base_id = len(self._pool);
         for i in range(self._processes - len(self._pool)):
-            w = self.Process(target=affinity_worker35,
+            w = self.Process(self._ctx, target=affinity_worker35,
                              args=(self._inqueue, self._outqueue,
                                    self._initializer,
                                    self._initargs, self._maxtasksperchild,
