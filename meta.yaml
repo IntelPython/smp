@@ -1,7 +1,7 @@
 #{% set data = load_setup_py_data() %}
 #{% set version = data.get('version') %}
 {% set version = "0.1.3" %}
-{% set buildnumber = 0 %}
+{% set buildnumber = 1 %}
 
 package:
     name: smp
