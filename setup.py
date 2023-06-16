@@ -36,7 +36,7 @@ from distutils.core import *
 setup(  name        ="SMP",
         description ="Static Multi-Processing",
         long_description= doc,
-        url         ="https://software.intel.com/intel-distribution-for-python",
+        url         ="https://www.intel.com/content/www/us/en/developer/tools/oneapi/distribution-for-python.html",
         author      ="Intel Corporation",
         author_email="scripting@intel.com",
         license     ="BSD",
